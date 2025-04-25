@@ -18,6 +18,9 @@ func makeMarkdownMessage(title, message, remoteIP string, withinCodeBlock bool) 
 	if withinCodeBlock {
 		tmpl = messageTemplateCodeBlock
 	}
+	if title == "" {
+		title += "Recieved webhook"
+	}
 
 	return plugin.Message{
 		Title: title,
@@ -25,6 +28,7 @@ func makeMarkdownMessage(title, message, remoteIP string, withinCodeBlock bool) 
 			remoteIP,
 			message,
 		),
+		Priority: 5,
 		Extras: map[string]interface{}{
 			"client::display": map[string]interface{}{
 				"contentType": "text/markdown",

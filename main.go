@@ -71,6 +71,8 @@ func (p *Plugin) RegisterWebhook(basePath string, mux *gin.RouterGroup) {
 	p.basePath = basePath
 
 	webhookHandler := func(c *gin.Context) {
+		//read header
+		title := c.GetHeader("application")
 		// read body
 		bytes, err := io.ReadAll(c.Request.Body)
 		if err != nil {
@@ -119,14 +121,14 @@ func (p *Plugin) RegisterWebhook(basePath string, mux *gin.RouterGroup) {
 				return
 			}
 			p.msgHandler.SendMessage(makeMarkdownMessage(
-				"Recieved webhook with JSON",
+				title,
 				string(jsonStr),
 				c.ClientIP(),
 				true,
 			))
 		case ContentTypeMarkdown:
 			p.msgHandler.SendMessage(makeMarkdownMessage(
-				"Recieved webhook with Markdown",
+				title,
 				string(bytes),
 				c.ClientIP(),
 				false,
@@ -134,7 +136,7 @@ func (p *Plugin) RegisterWebhook(basePath string, mux *gin.RouterGroup) {
 		case ContentTypeUnknown:
 			// just send the string
 			p.msgHandler.SendMessage(makeMarkdownMessage(
-				"Recieved webhook with unknown content type",
+				title,
 				string(bytes),
 				c.ClientIP(),
 				true,
